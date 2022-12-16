@@ -1,0 +1,14 @@
+{
+  "schemaType": "NERDLET",
+  "id": "home",
+  "displayName": "Integration Services Explorer",
+  "description": "Integration Services Explorer",
+  "context": {
+    "entities": [
+      {
+        "domain": "EXT",
+        "type": "SAP_ABAPWS"
+      }
+    ]
+  }
+}

@@ -1,17 +1,18 @@
 {
-  "tagline": "[30 characters]",
-  "repository": "https://github.com/newrelic/{{ NERDPACK_NAME }}.git",
-  "details": "[]",
+  "tagline": "Integration Services Explorer",
+  "repository": "https://github.com/newrelic/nr1-sap-webservices.git",
+  "details": "SAP Integration Service Explorer tracks the SAP WebServices throughout the SAP system. It lets users follow through WebServices activities to pinpoint issues. It correlates Integration Service events to other SAP system events such as Transports, and shows related logs and distributed traces around the time when an event occurred.",
+  "keywords": ["visualizations", "sap", "webservice","abapws", "abap_ws", "process", "integration"],
   "support": {
     "issues": {
-      "url": "https://github.com/newrelic/{{ NERDPACK_NAME }}/issues"
+      "url": "https://github.com/newrelic/nr1-sap-webservices/issues"
     },
     "email": {
-      "address": "opensource+{{ NERDPACK_NAME }}@newrelic.com"
+      "address": "opensource+nr1-sap-webservices@newrelic.com"
     },
     "community": {
-      "url": "https://discuss.newrelic.com/t/[YOUR REPO SUPPORT TOPIC]"
+      "url": "https://discuss.newrelic.com/t/new-relic-monitoring-for-sap-solutions-now-available/188447"
     }
   },
-  "whatsNew": "\n-Fix: One change that was made\n-Fix: Another change that was made\n-Feat: One feature that was added"
+  "whatsNew": "\n-Feat: SAP Integration Services now available"
 }

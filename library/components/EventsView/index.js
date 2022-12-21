@@ -46,27 +46,28 @@ const EventsView = ({
     if (!eventsTimes) return;
     const loadEvents = async () => {
       const [minTime, maxTime] = eventsTimes;
-      const queryTime =
-        maxTime > minTime
-          ? `SINCE ${minTime} UNTIL ${maxTime}`
-          : `SINCE ${minTime}`;
+      const queryTime = 'SINCE 7 DAYS AGO'; // ### TEST QUERY TIME #################################
+        // maxTime > minTime
+        //   ? `SINCE ${minTime} UNTIL ${maxTime}`
+        //   : `SINCE ${minTime}`;
       const queryFilters = `WHERE instrumentation.provider = 'SAP' AND SYS_ID = '${webService.sysId}'`;
       const queryLimit = 'LIMIT MAX';
 
-      // const historyQuery = `SELECT * FROM NR_SAP_INTEGRATION_SERVICE WHERE Interface = '${webService.interface}' AND SYS_ID = '${webService.sysId}' ${queryTime} ${queryLimit}`;
-      /* ### TEST NRQL */ const historyQuery = `SELECT * FROM NR_SAP_INTEGRATION_SERVICE WHERE Interface = '${webService.interface}' AND SYS_ID = '${webService.sysId}' ${queryTime} ${queryLimit}`;
+      const historyQuery = `SELECT * FROM NR_SAP_INTEGRATION_SERVICE WHERE Interface = '${webService.interface}' AND SYS_ID = '${webService.sysId}' AND Message_ID = '${webService.messageId}' ${queryTime} ${queryLimit}`;
 
-      // const transportsQuery = `SELECT * FROM NR_SAP_TRANSPORT ${queryFilters} ${queryTime} ${queryLimit}`;
-      /* ### TEST NRQL */ const transportsQuery = `SELECT * FROM NR_SAP_TRANSPORT ${queryFilters} since 3 days ago ${queryLimit}`;
+      const transportsQuery = `SELECT * FROM NR_SAP_TRANSPORT ${queryFilters} ${queryTime} ${queryLimit}`;
 
-      // const logsQuery = `SELECT * FROM Log ${queryFilters} AND (EXTNUMBER LIKE '%${webService.messageId}%' OR MESSAGES LIKE '%${webService.messageId}%') ${queryTime} ${queryLimit}`;
-      /* ### TEST NRQL */ const logsQuery = `SELECT * FROM Log ${queryFilters} since 3 days ago ${queryLimit}`;
+      const logsQuery = `SELECT * FROM Log ${queryFilters} AND (EXTNUMBER LIKE '%${webService.messageId}%' OR MESSAGES LIKE '%${webService.messageId}%') ${queryTime} ${queryLimit}`;
 
-      // const tracesQuery = `SELECT * FROM Span WHERE ROOT_CONTEXT_ID = '${webService.rootContextId ||
-      //  ''}' AND Transaction_ID = '${webService.rootContextId ||
-      //  ''} ${queryTime} ${queryLimit}`;
-      /* ### TEST NRQL */ const tracesQuery = `SELECT * FROM Span WHERE ROOT_CONTEXT_ID = '${webService.rootContextId ||
-        /* ### TEST NRQL */ ''}' since 3 days ago ${queryLimit}`;
+      const tracesQuery = `SELECT * FROM Span WHERE ROOT_CONTEXT_ID = '${webService.rootContextId ||
+        ''}' AND TRANSACTION_ID = '${webService.transactionId ||
+        ''}' ${queryTime} ${queryLimit}`;
+
+      console.log('### SK >>> webService: ', webService);
+      console.log('### SK >>> historyQuery: ', historyQuery);
+      console.log('### SK >>> transportsQuery: ', transportsQuery);
+      console.log('### SK >>> logsQuery: ', logsQuery);
+      console.log('### SK >>> tracesQuery: ', tracesQuery);
 
       const query = gql`
         query WebServicesQuery(
@@ -111,24 +112,27 @@ const EventsView = ({
       if (error) return;
       const evts = Object.keys(res).reduce((evts, evt) => {
         if (evt === '__typename') return evts;
+        console.log('### SK >>> ', evt, ': ', res[evt].results);
         (res[evt].results || []).forEach(e => {
           const event = {
             ...e,
             eventType: evt,
-            eventColor:
-              COLORS[evt === 'history' ? e.STATUS_LIGHT : evt.toUpperCase()]
+            eventColor: COLORS[evt.toUpperCase()]
           };
           /* eslint-disable prefer-template */
           /* eslint-disable prettier/prettier */
-            if (evt === 'history') {
+          if (evt === 'history') {
             event.eventDescription =
               `${e.Processing_Status} ${e.Message_Status}.` +
               (e.Error_ID ? ` - error id: ${e.Error_ID}` : '') +
               (e.Error_Information ? ` - error info: ${e.Error_Information}` : '');
           }
+
           if (evt === 'logs') event.eventDescription = e.message;
+
           if (evt === 'transports')
             event.eventDescription = `Transport: ${e.TRANSPORT} by ${e.OWNER} imported.  Return Code: ${e.RETURN_CODE}`;
+
           if (evt === 'traces') {
             event.eventDescription =
               (e.FUNCTION_NAME ? `Trace span of ${e.FUNCTION_NAME}` : '') +
@@ -139,6 +143,7 @@ const EventsView = ({
           }
           /* eslint-enable prettier/prettier */
           /* eslint-enable prefer-template */
+
           if (!evts.length) {
             evts.push(event);
           } else {
@@ -201,12 +206,60 @@ const EventsView = ({
             navigation.openStackedNerdlet({
               id: 'distributed-tracing-nerdlets.distributed-tracing-launcher',
               urlState: {
-                accountId,
-                query: `instrumentation.provider:SAP`,
-                // query: `instrumentation.provider:SAP ROOT_CONTEXT_ID: ${item.ROOT_CONTEXT_ID} TRANSACTION_ID: ${item.TRANSACTION_ID}`,
-                ROOT_CONTEXT_ID: '005056B10FE41ED8A583C8FB408CA12D',
-                eventType: ['Span'],
-                timestamp: item.timestamp
+                anomalyFocusMode: false,
+                checkboxFiltersTab: 'ENTITIES_TAB',
+                compareTo: null,
+                durationType: 'TRACE_DURATION_MS',
+                errorFocusMode: false,
+                facetType: 'ROOT_ENTRY_SPAN',
+                groupSimilarTraces: true,
+                query: {
+                  indexQuery: {
+                    conditionSets: [],
+                    conditionType: 'INDEX',
+                    operator: 'AND'
+                  },
+                  operator: 'AND',
+                  spanQuery: {
+                    conditionSets: [
+                      {
+                        conditionType: 'SPAN',
+                        conditions: [
+                          {
+                            attr: 'ROOT_CONTEXT_ID',
+                            operator: 'EQ',
+                            value: item.ROOT_CONTEXT_ID // '000D3A4C09BA1EDD9EBB070FB957C254'
+                          }
+                        ],
+                        operator: 'AND'
+                      },
+                      {
+                        conditionType: 'SPAN',
+                        conditions: [
+                          {
+                            attr: 'TRANSACTION_ID',
+                            operator: 'EQ',
+                            value: item.TRANSACTION_ID // '7BE35298D27F06E0E00639CCE651B4FE'
+                          }
+                        ],
+                        operator: 'AND'
+                      }
+                    ],
+                    operator: 'AND'
+                  }
+                },
+                selectedWorkloads: [],
+                shouldShowCallout: true,
+                showTraceMap: true,
+                threadId: null,
+                traceGroupsSorting: {
+                  column: 1,
+                  type: 'DESC'
+                },
+                traceListSorting: {
+                  column: 1,
+                  type: 'ascending'
+                }
               }
             });
             break;
@@ -221,6 +274,7 @@ const EventsView = ({
     }
   ];
 
+  console.log('### SK >>> filteredEvents: ', filteredEvents);
   return (
     <div className="events-view">
       <Card>
@@ -277,9 +331,7 @@ const EventsView = ({
               <TableRow key={index} actions={tableActions}>
                 <TableRowCell
                   style={{
-                    borderLeft: `5px solid ${
-                      COLORS[item.eventType.toUpperCase()]
-                    }`
+                    borderLeft: `5px solid ${item.eventColor}`
                   }}
                 >
                   {formatEventTime(item.timestamp)}

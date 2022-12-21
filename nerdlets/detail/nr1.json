@@ -1,6 +1,6 @@
 {
   "schemaType": "NERDLET",
   "id": "detail",
-  "displayName": "Integration Service Details",
-  "description": "Integration Service Details"
+  "displayName": "ABAP WebServices Details",
+  "description": "SAP Integration Service Details - ABAP_WS"
 }

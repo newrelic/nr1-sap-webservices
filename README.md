@@ -20,6 +20,8 @@ The user can select any of the events in the list, and in case of Log or Trace e
 
 ![Log details for ABAP Web Services](./screenshots/screenshot-3.png)
 
+![Log details for ABAP Web Services](./screenshots/screenshot-4.png)
+
 The SAP ABAP Web Services Explorer requires the installation of the New Relic Monitoring for SAP Solutions on the monitored SAP systems.  Please refer to the [installation guide](https://drive.google.com/file/d/1ldVOF2Bo88nVBKn7ai1RIb7Sn6HhmFvI/view?usp=sharing) for more details. 
 
 ## Open source license

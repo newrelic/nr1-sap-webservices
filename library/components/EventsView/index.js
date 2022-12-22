@@ -46,10 +46,10 @@ const EventsView = ({
     if (!eventsTimes) return;
     const loadEvents = async () => {
       const [minTime, maxTime] = eventsTimes;
-      const queryTime = 'SINCE 7 DAYS AGO'; // ### TEST QUERY TIME #################################
-        // maxTime > minTime
-        //   ? `SINCE ${minTime} UNTIL ${maxTime}`
-        //   : `SINCE ${minTime}`;
+      const queryTime =
+        maxTime > minTime
+          ? `SINCE ${minTime} UNTIL ${maxTime}`
+          : `SINCE ${minTime}`;
       const queryFilters = `WHERE instrumentation.provider = 'SAP' AND SYS_ID = '${webService.sysId}'`;
       const queryLimit = 'LIMIT MAX';
 
@@ -62,12 +62,6 @@ const EventsView = ({
       const tracesQuery = `SELECT * FROM Span WHERE ROOT_CONTEXT_ID = '${webService.rootContextId ||
         ''}' AND TRANSACTION_ID = '${webService.transactionId ||
         ''}' ${queryTime} ${queryLimit}`;
-
-      console.log('### SK >>> webService: ', webService);
-      console.log('### SK >>> historyQuery: ', historyQuery);
-      console.log('### SK >>> transportsQuery: ', transportsQuery);
-      console.log('### SK >>> logsQuery: ', logsQuery);
-      console.log('### SK >>> tracesQuery: ', tracesQuery);
 
       const query = gql`
         query WebServicesQuery(
@@ -112,7 +106,6 @@ const EventsView = ({
       if (error) return;
       const evts = Object.keys(res).reduce((evts, evt) => {
         if (evt === '__typename') return evts;
-        console.log('### SK >>> ', evt, ': ', res[evt].results);
         (res[evt].results || []).forEach(e => {
           const event = {
             ...e,
@@ -228,7 +221,7 @@ const EventsView = ({
                           {
                             attr: 'ROOT_CONTEXT_ID',
                             operator: 'EQ',
-                            value: item.ROOT_CONTEXT_ID // '000D3A4C09BA1EDD9EBB070FB957C254'
+                            value: item.ROOT_CONTEXT_ID
                           }
                         ],
                         operator: 'AND'
@@ -274,7 +267,6 @@ const EventsView = ({
     }
   ];
 
-  console.log('### SK >>> filteredEvents: ', filteredEvents);
   return (
     <div className="events-view">
       <Card>

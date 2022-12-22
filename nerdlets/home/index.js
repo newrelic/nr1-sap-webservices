@@ -139,8 +139,6 @@ const HomeNerdlet = () => {
       setLoading(loadingResp);
       if (error || !data) return;
 
-      console.log('### SK >>> variables.nrqlQuery: ', variables.nrqlQuery);
-      console.log('### SK >>> messageId = 6045BD8FB9BB1EED9FF225C89FFBA81F: ', data.actor?.nrql?.results.find(e => e.messageId = '6045BD8FB9BB1EED9FF225C89FFBA81F') );
       setWebServices(data.actor?.nrql?.results || []);
     };
 

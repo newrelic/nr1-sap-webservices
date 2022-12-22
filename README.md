@@ -12,9 +12,13 @@ ABAP Web Services Explorer provides a list of all ABAP Web Services within as sd
 
 ![overview of SAP ABAP Web Services](./screenshots/screenshot-1.png)
 
-Selecting a particular message would take the user to a details page where it shows more details including the message details, charts of transaction traces, Logs, and SAP Transports. Additionally below the charts it shows a list of all Web Services events, traces, logs, and transports where the user can select one event and get more details for Log and Trace events in New Relic's Observability for Logs, and for Distributed Traces.
+Selecting a particular message would take the user to a details page where it shows more details including the message details, charts of transaction traces, Logs, and SAP Transports. Additionally below the charts it shows a list of all Web Services events, traces, logs, and transports.
 
 ![detail page for ABAP Web Services](./screenshots/screenshot-2.png)
+
+The user can select any of the events in the list, and in case of Log or Trace events, the explorer will show the relevant logs/traces in New Relic's Observability for Logs, and for Distributed Traces.
+
+![Log details for ABAP Web Services](./screenshots/screenshot-3.png)
 
 The SAP ABAP Web Services Explorer requires the installation of the New Relic Monitoring for SAP Solutions on the monitored SAP systems.  Please refer to the [installation guide](https://drive.google.com/file/d/1ldVOF2Bo88nVBKn7ai1RIb7Sn6HhmFvI/view?usp=sharing) for more details. 
 

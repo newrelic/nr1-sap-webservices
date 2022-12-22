@@ -232,7 +232,7 @@ const EventsView = ({
                           {
                             attr: 'TRANSACTION_ID',
                             operator: 'EQ',
-                            value: item.TRANSACTION_ID // '7BE35298D27F06E0E00639CCE651B4FE'
+                            value: item.TRANSACTION_ID
                           }
                         ],
                         operator: 'AND'

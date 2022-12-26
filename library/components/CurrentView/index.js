@@ -8,9 +8,6 @@ const CurrentView = ({ webService }) => {
   return (
     <div
       className={`current-view ${(webService.statusGroup || '').toLowerCase()}`}
-      // style={{
-      //   border: `2px solid ${COLORS[webService.statusGroup]}`
-      // }}
     >
       <BlockText type={BlockText.TYPE.PARAGRAPH}>
         <svg viewBox="0 0 100 70" height="30">

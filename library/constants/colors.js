@@ -8,17 +8,14 @@ export const COLORS = {
   HISTORY: '#26ff00',
 
   yellow: '#FCCC0A',
-  YELLOW: '#FCCC0A',
   ISOLATED: '#FCCC0A',
   WAITING: '#FCCC0A',
 
   green: '#088d2b',
-  GREEN: '#088d2b',
   SUCCESSFUL: '#088d2b',
   TRANSFERRED: '#088d2b',
 
   red: '#EE352E',
-  RED: '#EE352E',
   CANCELLED: '#EE352E',
   ERROR: '#EE352E'
 };

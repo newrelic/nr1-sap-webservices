@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/newrelic/nr1-sap-webservices/compare/v1.0.0...v1.0.1) (2022-12-26)
+
+
+### Bug Fixes
+
+* update uuid / nr1.json ([e2838a5](https://github.com/newrelic/nr1-sap-webservices/commit/e2838a5fd1e231cc211ae0dec721badc93d3ad5e))
+
 ## [1.0.1](https://github.com/newrelic/nr1-sap-webservices/compare/v1.0.0...v1.0.1) (2022-12-22)
 
 

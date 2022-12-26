@@ -112,8 +112,7 @@ const EventsView = ({
             eventType: evt,
             eventColor: COLORS[evt.toUpperCase()]
           };
-          /* eslint-disable prefer-template */
-          /* eslint-disable prettier/prettier */
+          /* eslint-disable prefer-template, prettier/prettier */
           if (evt === 'history') {
             event.eventDescription =
               `${e.Processing_Status} ${e.Message_Status}.` +
@@ -134,8 +133,7 @@ const EventsView = ({
               (e.PROGRAM_NAME ? ` Called by ${e.PROGRAM_NAME} at line ${e.PROGRAM_LINE}` : '');
             if (event.eventDescription === '.') event.eventDescription = '--';
           }
-          /* eslint-enable prettier/prettier */
-          /* eslint-enable prefer-template */
+          /* eslint-enable prefer-template, prettier/prettier */
 
           if (!evts.length) {
             evts.push(event);

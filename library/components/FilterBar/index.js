@@ -119,6 +119,24 @@ const FilterBar = ({
             value={values.communicationType}
             onChange={evt => changeHandler(evt, 'communicationType')}
           />
+          <TextField
+            label="Filter by Message ID"
+            placeholder=""
+            value={values.messageId}
+            onChange={evt => changeHandler(evt, 'messageId')}
+          />
+          <TextField
+            label="Filter by Root Context ID"
+            placeholder=""
+            value={values.rootContextId}
+            onChange={evt => changeHandler(evt, 'rootContextId')}
+          />
+          <TextField
+            label="Filter by Transaction ID"
+            placeholder=""
+            value={values.transactionId}
+            onChange={evt => changeHandler(evt, 'transactionId')}
+          />
         </>
       ) : null}
     </div>

@@ -35,11 +35,11 @@ const ChartsView = ({
 
     const historyEvents = selectedWebService ? [selectedWebService] : history;
     const historyEventsData = historyEvents.map(
-      ({ timestamp, STATUS, STATUS_LIGHT }, i) => ({
+      ({ timestamp, STATUS_GROUP }, i) => ({
         metadata: {
           id: `status${i}`,
-          name: `WebService in status ${STATUS}`,
-          color: COLORS[STATUS_LIGHT],
+          name: `WebService in status ${STATUS_GROUP}`,
+          color: COLORS[STATUS_GROUP],
           viz: 'event'
         },
         data: [{ x0: timestamp, x1: timestamp }]
@@ -49,7 +49,7 @@ const ChartsView = ({
       metadata: {
         id: 'events-window',
         name: 'Events window',
-        color: 'rgba(101, 117, 123, .25)',
+        color: COLORS.HISTORY,
         viz: 'event'
       },
       data:
@@ -128,8 +128,11 @@ const ChartsView = ({
 
   return (
     <div>
-      <div /* style={{ position: 'absolute', right: '50px' }} */>
-        <Dropdown title={`Chart Data: ${historyTime}`}>
+      <div>
+        <Dropdown
+          className="charts-time-filter"
+          title={`Chart Data: ${historyTime}`}
+        >
           {HISTORY_TIMES.map((period, i) => (
             <DropdownItem key={i} onClick={() => updateHistoryTime(i)}>
               {period.display}

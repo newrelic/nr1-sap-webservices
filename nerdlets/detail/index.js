@@ -24,12 +24,14 @@ const DetailNerdlet = () => {
       const historyTime = HISTORY_TIMES[historyTimeIndex];
       const queryFilters = `WHERE instrumentation.provider = 'SAP' AND SYS_ID = '${webService.sysId}'`;
       const queryLimit = 'LIMIT MAX';
-      const historyQuery = `SELECT * FROM NR_SAP_INTEGRATION_SERVICE WHERE Interface = '${webService.interface}' AND SYS_ID = '${webService.sysId}' ${queryLimit} ${historyTime.query}`;
+      const historyQuery = `SELECT * FROM NR_SAP_INTEGRATION_SERVICE WHERE Interface = '${webService.interface}' AND SYS_ID = '${webService.sysId}' AND Message_ID = '${webService.messageId}' ${queryLimit} ${historyTime.query}`;
       const transportsQuery = `SELECT count(*) FROM NR_SAP_TRANSPORT ${queryFilters} ${historyTime.query} TIMESERIES`;
-      // const logsQuery = `SELECT count(*) FROM Log ${queryFilters} AND (EXTNUMBER LIKE '%${webService.messageId}%' OR MESSAGES LIKE '%${webService.messageId}%') ${historyTime.query} TIMESERIES`;
-      const logsQuery = `SELECT count(*) FROM Log ${queryFilters} ${historyTime.query} TIMESERIES`;
-      const tracesQuery = `SELECT count(*) FROM DistributedTraceSummary WHERE FUNCTION_NAME = '${webService.processFunction ||
-        ''}' ${historyTime.query} TIMESERIES`;
+      const logsQuery = `SELECT count(*) FROM Log ${queryFilters} AND (EXTNUMBER LIKE '%${webService.messageId}%' OR MESSAGES LIKE '%${webService.messageId}%') ${historyTime.query} TIMESERIES`;
+      const tracesQuery = `SELECT count(*) FROM Span WHERE ROOT_CONTEXT_ID = '${webService.rootContextId ||
+        ''}' AND Transaction_ID = '${webService.transactionId || ''}' ${
+        historyTime.query
+      } TIMESERIES`;
+
       const query = gql`
         query WebServicesQuery(
           $accounts: [Int!]!
@@ -104,12 +106,7 @@ const DetailNerdlet = () => {
   return (
     <div className="details">
       <div className="content">
-        <div className="left-column">
-          <div className="current-section">
-            <CurrentView webService={webService} />
-          </div>
-        </div>
-        <div className="right-column">
+        <div className="top-row">
           <div className="charts-section">
             <ChartsView
               history={history}
@@ -122,6 +119,13 @@ const DetailNerdlet = () => {
               eventsTimes={eventsTimes}
             />
           </div>
+        </div>
+
+        <div className="bottom-row">
+          <div className="current-section">
+            <CurrentView webService={webService} />
+          </div>
+
           <div className="table-section">
             <EventsView
               accountId={accountId}

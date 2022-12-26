@@ -3,19 +3,12 @@ import PropTypes from 'prop-types';
 
 import data from './data';
 import { getPixels } from '../../utils/helpers';
-// import OutboundLinks from './outbound-links';
-// import InboundLinks from './inbound-links';
+import { COLORS } from '../../constants/colors';
 
 const GraphView = ({ height, width, webServices }) => {
   const { nodes, viewBox } = data;
 
-  const colors = {
-    yellow: '#FCCC0A',
-    green: '#00933C',
-    red: '#EE352E'
-  };
-
-  const fillColor = color => (color === 'yellow' ? 'black' : 'white');
+  const fillColor = color => (color === 'yellow' ? COLORS.black : COLORS.white);
 
   const statusCounts = webServices.reduce(
     (acc, cur) => ({
@@ -45,7 +38,7 @@ const GraphView = ({ height, width, webServices }) => {
                 >
                   <title>{node.disp}</title>
                   <ellipse
-                    fill={colors[node.color]}
+                    fill={COLORS[node.color]}
                     cx="100"
                     cy="150"
                     rx="100"

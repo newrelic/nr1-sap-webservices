@@ -98,38 +98,29 @@ const HomeNerdlet = () => {
       const queryFilter = `WHERE Interface = '${wsInterface}' AND SYS_ID = '${sId}'`;
       const fields = [
         'Interface',
-        'Adapter_Type',
+        'Message_ID',
+        'Message_Status',
+        'Processing_Status',
+        'Error_ID',
+        'Error_Information',
+        'STATUS_GROUP',
+        'SYS_ID',
         'Client',
+
+        'Adapter_Type',
         'Communication_Type',
         'Creation_Date',
         'Creation_Time',
-        'Error_ID',
-        'Error_Information',
         'Execution_Date',
         'Execution_Time',
         'Expiry_Date',
         'Message_Size',
         'Root_Context_ID',
-        'Message_ID',
-        'Message_Status',
-        'Processing_Status',
         'Receiver_Interface_Name',
         'Sender_Interface_Name',
-        'STATUS_GROUP',
-        'SYS_ID',
         'TOTAL_TIME',
         'Transaction_ID',
         'User'
-
-        // 'Interface',
-        // 'Message_ID',
-        // 'Message_Status',
-        // 'Processing_Status',
-        // 'Error_ID',
-        // 'Error_Information',
-        // 'STATUS_GROUP',
-        // 'SYS_ID',
-        // 'Client'
       ];
       const queryFields = `${fields.reduce(
         (acc, cur, index) =>
@@ -139,7 +130,7 @@ const HomeNerdlet = () => {
         ''
       )}`;
 
-      variables.nrqlQuery = `SELECT ${queryFields} FROM NR_SAP_INTEGRATION_SERVICE FACET Message_ID ${queryFilter} ${queryTime} LIMIT MAX`;
+      variables.nrqlQuery = `SELECT ${queryFields} FROM NR_SAP_INTEGRATION_SERVICE ${queryFilter} FACET Message_ID as messageId ${queryTime} LIMIT MAX`;
       setLoading(true);
       const { loading: loadingResp, data, error } = await NerdGraphQuery.query({
         query,

@@ -2,38 +2,24 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { BlockText } from 'nr1';
-
-const colors = {
-  yellow: '#FCCC0A',
-  ISOLATED: '#FCCC0A',
-  WAITING: '#FCCC0A',
-  green: '#00933C',
-  SUCCESSFUL: '#00933C',
-  TRANSFERRED: '#00933C',
-  red: '#EE352E',
-  CANCELLED: '#EE352E',
-  ERROR: '#EE352E'
-};
+import { COLORS } from '../../constants/colors';
 
 const CurrentView = ({ webService }) => {
   return (
     <div
-      className={`current-view ${(webService.statusLight || '').toLowerCase()}`}
-      style={{
-        border: `2px solid ${colors[webService.statusGroup]}`
-      }}
+      className={`current-view ${(webService.statusGroup || '').toLowerCase()}`}
     >
       <BlockText type={BlockText.TYPE.PARAGRAPH}>
         <svg viewBox="0 0 100 70" height="30">
           <ellipse
-            fill={colors[webService.statusGroup]}
+            fill={COLORS[webService.statusGroup]}
             cx="30"
             cy="45"
             rx="30"
             ry="17"
           />
         </svg>
-        <strong> SUCCESSFUL</strong>
+        <strong>{webService.statusGroup}</strong>
       </BlockText>
       <BlockText type={BlockText.TYPE.PARAGRAPH}>
         <strong>Message ID:</strong> {webService.messageId || '--'}

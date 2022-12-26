@@ -53,20 +53,15 @@ const EventsView = ({
       const queryFilters = `WHERE instrumentation.provider = 'SAP' AND SYS_ID = '${webService.sysId}'`;
       const queryLimit = 'LIMIT MAX';
 
-      // const historyQuery = `SELECT * FROM NR_SAP_INTEGRATION_SERVICE WHERE Interface = '${webService.interface}' AND SYS_ID = '${webService.sysId}' ${queryTime} ${queryLimit}`;
-      /* ### TEST NRQL */ const historyQuery = `SELECT * FROM NR_SAP_INTEGRATION_SERVICE WHERE Interface = '${webService.interface}' AND SYS_ID = '${webService.sysId}' ${queryTime} ${queryLimit}`;
+      const historyQuery = `SELECT * FROM NR_SAP_INTEGRATION_SERVICE WHERE Interface = '${webService.interface}' AND SYS_ID = '${webService.sysId}' AND Message_ID = '${webService.messageId}' ${queryTime} ${queryLimit}`;
 
-      // const transportsQuery = `SELECT * FROM NR_SAP_TRANSPORT ${queryFilters} ${queryTime} ${queryLimit}`;
-      /* ### TEST NRQL */ const transportsQuery = `SELECT * FROM NR_SAP_TRANSPORT ${queryFilters} since 3 days ago ${queryLimit}`;
+      const transportsQuery = `SELECT * FROM NR_SAP_TRANSPORT ${queryFilters} ${queryTime} ${queryLimit}`;
 
-      // const logsQuery = `SELECT * FROM Log ${queryFilters} AND (EXTNUMBER LIKE '%${webService.messageId}%' OR MESSAGES LIKE '%${webService.messageId}%') ${queryTime} ${queryLimit}`;
-      /* ### TEST NRQL */ const logsQuery = `SELECT * FROM Log ${queryFilters} since 3 days ago ${queryLimit}`;
+      const logsQuery = `SELECT * FROM Log ${queryFilters} AND (EXTNUMBER LIKE '%${webService.messageId}%' OR MESSAGES LIKE '%${webService.messageId}%') ${queryTime} ${queryLimit}`;
 
-      // const tracesQuery = `SELECT * FROM Span WHERE ROOT_CONTEXT_ID = '${webService.rootContextId ||
-      //  ''}' AND Transaction_ID = '${webService.rootContextId ||
-      //  ''} ${queryTime} ${queryLimit}`;
-      /* ### TEST NRQL */ const tracesQuery = `SELECT * FROM Span WHERE ROOT_CONTEXT_ID = '${webService.rootContextId ||
-        /* ### TEST NRQL */ ''}' since 3 days ago ${queryLimit}`;
+      const tracesQuery = `SELECT * FROM Span WHERE ROOT_CONTEXT_ID = '${webService.rootContextId ||
+        ''}' AND TRANSACTION_ID = '${webService.transactionId ||
+        ''}' ${queryTime} ${queryLimit}`;
 
       const query = gql`
         query WebServicesQuery(
@@ -115,20 +110,21 @@ const EventsView = ({
           const event = {
             ...e,
             eventType: evt,
-            eventColor:
-              COLORS[evt === 'history' ? e.STATUS_LIGHT : evt.toUpperCase()]
+            eventColor: COLORS[evt.toUpperCase()]
           };
-          /* eslint-disable prefer-template */
-          /* eslint-disable prettier/prettier */
-            if (evt === 'history') {
+          /* eslint-disable prefer-template, prettier/prettier */
+          if (evt === 'history') {
             event.eventDescription =
               `${e.Processing_Status} ${e.Message_Status}.` +
               (e.Error_ID ? ` - error id: ${e.Error_ID}` : '') +
               (e.Error_Information ? ` - error info: ${e.Error_Information}` : '');
           }
+
           if (evt === 'logs') event.eventDescription = e.message;
+
           if (evt === 'transports')
             event.eventDescription = `Transport: ${e.TRANSPORT} by ${e.OWNER} imported.  Return Code: ${e.RETURN_CODE}`;
+
           if (evt === 'traces') {
             event.eventDescription =
               (e.FUNCTION_NAME ? `Trace span of ${e.FUNCTION_NAME}` : '') +
@@ -137,8 +133,8 @@ const EventsView = ({
               (e.PROGRAM_NAME ? ` Called by ${e.PROGRAM_NAME} at line ${e.PROGRAM_LINE}` : '');
             if (event.eventDescription === '.') event.eventDescription = '--';
           }
-          /* eslint-enable prettier/prettier */
-          /* eslint-enable prefer-template */
+          /* eslint-enable prefer-template, prettier/prettier */
+
           if (!evts.length) {
             evts.push(event);
           } else {
@@ -201,12 +197,60 @@ const EventsView = ({
             navigation.openStackedNerdlet({
               id: 'distributed-tracing-nerdlets.distributed-tracing-launcher',
               urlState: {
-                accountId,
-                query: `instrumentation.provider:SAP`,
-                // query: `instrumentation.provider:SAP ROOT_CONTEXT_ID: ${item.ROOT_CONTEXT_ID} TRANSACTION_ID: ${item.TRANSACTION_ID}`,
-                ROOT_CONTEXT_ID: '005056B10FE41ED8A583C8FB408CA12D',
-                eventType: ['Span'],
-                timestamp: item.timestamp
+                anomalyFocusMode: false,
+                checkboxFiltersTab: 'ENTITIES_TAB',
+                compareTo: null,
+                durationType: 'TRACE_DURATION_MS',
+                errorFocusMode: false,
+                facetType: 'ROOT_ENTRY_SPAN',
+                groupSimilarTraces: true,
+                query: {
+                  indexQuery: {
+                    conditionSets: [],
+                    conditionType: 'INDEX',
+                    operator: 'AND'
+                  },
+                  operator: 'AND',
+                  spanQuery: {
+                    conditionSets: [
+                      {
+                        conditionType: 'SPAN',
+                        conditions: [
+                          {
+                            attr: 'ROOT_CONTEXT_ID',
+                            operator: 'EQ',
+                            value: item.ROOT_CONTEXT_ID
+                          }
+                        ],
+                        operator: 'AND'
+                      },
+                      {
+                        conditionType: 'SPAN',
+                        conditions: [
+                          {
+                            attr: 'TRANSACTION_ID',
+                            operator: 'EQ',
+                            value: item.TRANSACTION_ID
+                          }
+                        ],
+                        operator: 'AND'
+                      }
+                    ],
+                    operator: 'AND'
+                  }
+                },
+                selectedWorkloads: [],
+                shouldShowCallout: true,
+                showTraceMap: true,
+                threadId: null,
+                traceGroupsSorting: {
+                  column: 1,
+                  type: 'DESC'
+                },
+                traceListSorting: {
+                  column: 1,
+                  type: 'ascending'
+                }
               }
             });
             break;
@@ -277,9 +321,7 @@ const EventsView = ({
               <TableRow key={index} actions={tableActions}>
                 <TableRowCell
                   style={{
-                    borderLeft: `5px solid ${
-                      COLORS[item.eventType.toUpperCase()]
-                    }`
+                    borderLeft: `5px solid ${item.eventColor}`
                   }}
                 >
                   {formatEventTime(item.timestamp)}

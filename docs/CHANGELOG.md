@@ -1,3 +1,11 @@
+## [1.0.2](https://github.com/newrelic/nr1-sap-webservices/compare/v1.0.1...v1.0.2) (2022-12-29)
+
+
+### Bug Fixes
+
+* screenshot image ratios ([ae6b84e](https://github.com/newrelic/nr1-sap-webservices/commit/ae6b84e18e24c1e5abdae42d79529eb7ba7d3b93))
+* set nerdlet id to nr1-apps ([375e140](https://github.com/newrelic/nr1-sap-webservices/commit/375e1400b373c868ae7c39b76b34d8f7afa1d09e))
+
 ## [1.0.1](https://github.com/newrelic/nr1-sap-webservices/compare/v1.0.0...v1.0.1) (2022-12-26)
 
 
